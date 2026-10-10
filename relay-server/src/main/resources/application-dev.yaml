@@ -1,0 +1,19 @@
+# Development profile: relaxed, localhost allowed, verbose logging
+spring:
+  jpa:
+    show-sql: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.relay: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
+
+# Dev-only secrets. Never use these outside local development.
+relay:
+  admin-token: ${RELAY_ADMIN_TOKEN:dev-admin-token}
+  secret-encryption-key: ${RELAY_SECRET_ENCRYPTION_KEY:ZGV2LW9ubHktMzItYnl0ZS1rZXktZm9yLWxvY2FsISE=}

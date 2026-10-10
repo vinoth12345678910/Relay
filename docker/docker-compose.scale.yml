@@ -1,0 +1,16 @@
+# A second Relay on the same database:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.scale.yml up -d relay-server-2
+services:
+  relay-server-2:
+    build: { context: .., dockerfile: relay-server/Dockerfile }
+    env_file: relay.dev.env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: relay
+      DB_USER: relay
+      DB_PASSWORD: relay
+    depends_on:
+      postgres: { condition: service_healthy }
+      relay-server: { condition: service_started }   # let instance 1 run Flyway first
+    ports: ["8081:8080"]

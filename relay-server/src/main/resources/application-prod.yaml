@@ -1,0 +1,9 @@
+# Production profile: strict, https required, quiet logging
+server:
+  port: 8080
+
+logging:
+  level:
+    root: WARN
+    com.relay: INFO
+    org.springframework.web: WARN

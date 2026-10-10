@@ -1,0 +1,26 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest        # has Docker, which Testcontainers needs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build and test (unit + integration)
+        run: mvn -B clean verify
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: '**/target/*-reports/**'
+      - name: Build Docker images
+        run: |
+          docker build -f relay-server/Dockerfile -t relay-server:ci .
+          docker build -f mock-receiver/Dockerfile -t mock-receiver:ci .

@@ -63,7 +63,11 @@ export default tseslint.config(
   {
     // Tests may read storage to prove secrets never land there.
     files: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'e2e/**'],
-    rules: { 'no-restricted-globals': 'off', 'no-restricted-properties': 'off' },
+    rules: {
+      'no-restricted-globals': 'off',
+      'no-restricted-properties': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+    },
   },
   {
     files: ['*.config.{js,ts}', 'e2e/**'],

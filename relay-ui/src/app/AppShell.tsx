@@ -1,5 +1,15 @@
 import { NavLink, Outlet } from 'react-router';
-import { Inbox, Link2, LogOut, Monitor, Moon, Send, Sun, Waypoints } from 'lucide-react';
+import {
+  Inbox,
+  LayoutDashboard,
+  Link2,
+  LogOut,
+  Monitor,
+  Moon,
+  Send,
+  Sun,
+  Waypoints,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { cn } from '@/lib/cn';
@@ -7,6 +17,7 @@ import { useTheme } from '@/lib/theme';
 import { maskKey, session, useSession } from '@/session/store';
 
 const NAV = [
+  { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/endpoints', label: 'Endpoints', icon: Link2, end: false },
   { to: '/events/new', label: 'Publish', icon: Send, end: false },
   { to: '/events', label: 'Events', icon: Inbox, end: true },

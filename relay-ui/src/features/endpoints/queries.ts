@@ -14,8 +14,13 @@ export const endpointKeys = {
   all: ['endpoints'] as const,
 };
 
-export function useEndpoints() {
-  return useQuery({ queryKey: endpointKeys.all, queryFn: ({ signal }) => listEndpoints(signal) });
+export function useEndpoints(opts: { refetchInterval?: number | false } = {}) {
+  return useQuery({
+    queryKey: endpointKeys.all,
+    queryFn: ({ signal }) => listEndpoints(signal),
+    refetchInterval: opts.refetchInterval ?? false,
+    refetchIntervalInBackground: false,
+  });
 }
 
 /** Replaces one endpoint in the cached list (or drops it), then refetches in the background. */

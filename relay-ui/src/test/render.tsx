@@ -26,9 +26,12 @@ export function connectTestSession(apiKey = TEST_KEY) {
 }
 
 /** Renders the whole app (real routes, providers, MSW-backed API) at `route`. */
-export function renderApp(route: string, opts: { connected?: boolean; clock?: Clock } = {}) {
+export function renderApp(
+  route: string,
+  opts: { connected?: boolean; clock?: Clock; advanceTimers?: (ms: number) => unknown } = {},
+) {
   if (opts.connected ?? true) connectTestSession();
-  const user = userEvent.setup();
+  const user = userEvent.setup(opts.advanceTimers ? { advanceTimers: opts.advanceTimers } : {});
   const queryClient = createQueryClient();
   queryClient.setDefaultOptions({
     queries: { ...queryClient.getDefaultOptions().queries, retry: false },

@@ -1,10 +1,11 @@
-import { Navigate, Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { ConnectPage } from '@/features/connect/ConnectPage';
 import { DeliveriesPage } from '@/features/deliveries/DeliveriesPage';
 import { EndpointsPage } from '@/features/endpoints/EndpointsPage';
 import { EventDetailPage } from '@/features/events/EventDetailPage';
 import { EventsPage } from '@/features/events/EventsPage';
 import { PublishPage } from '@/features/events/PublishPage';
+import { OverviewPage } from '@/features/overview/OverviewPage';
 import { AppShell } from './AppShell';
 import { RequireSession } from './RequireSession';
 
@@ -14,7 +15,7 @@ export function AppRoutes() {
       <Route path="/connect" element={<ConnectPage />} />
       <Route element={<RequireSession />}>
         <Route element={<AppShell />}>
-          <Route index element={<Navigate to="/endpoints" replace />} />
+          <Route index element={<OverviewPage />} />
           <Route path="endpoints" element={<EndpointsPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="events/new" element={<PublishPage />} />

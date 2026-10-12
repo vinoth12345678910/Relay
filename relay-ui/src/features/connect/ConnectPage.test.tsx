@@ -38,7 +38,7 @@ describe('Connect screen', () => {
     await user.type(screen.getByLabelText('API key'), KEY);
     await user.click(screen.getByRole('checkbox', { name: /Remember on this device/ }));
     await user.click(screen.getByRole('button', { name: 'Connect' }));
-    await screen.findByRole('heading', { name: 'Endpoints' });
+    await screen.findByRole('heading', { name: 'Overview' });
     expect(window.sessionStorage.getItem('relay-ui.session')).toContain(KEY);
     expect(JSON.stringify({ ...window.localStorage })).not.toContain(KEY);
 

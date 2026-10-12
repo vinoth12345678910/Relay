@@ -2,11 +2,10 @@ import { Link } from 'react-router';
 import type { DeliveryPage } from '@/api/schemas';
 import { RelativeTime } from '@/components/ui/RelativeTime';
 import { ReplayControl } from '@/features/deliveries/ReplayControl';
-import { useEndpointLookup } from '@/features/endpoints/useEndpointLookup';
+import { EndpointLabel } from '@/features/endpoints/EndpointLabel';
 import { recentDead } from './derive';
 
 export function RecentDeadCard({ dead }: { dead: DeliveryPage }) {
-  const endpoint = useEndpointLookup();
   const rows = recentDead(dead);
   return (
     <section
@@ -36,9 +35,9 @@ export function RecentDeadCard({ dead }: { dead: DeliveryPage }) {
                 <Link
                   to={`/deliveries?status=DEAD&delivery=${d.id}`}
                   className="block truncate font-mono text-[13px] hover:underline"
-                  title={endpoint(d.endpointId)?.url}
+                  aria-label={`Open dead delivery ${d.id.slice(0, 8)}`}
                 >
-                  {endpoint(d.endpointId)?.url ?? 'deleted endpoint'}
+                  <EndpointLabel id={d.endpointId} />
                 </Link>
                 <p className="text-xs text-muted">
                   {d.attemptCount} attempts · last code {d.lastStatusCode ?? 'none'} ·{' '}

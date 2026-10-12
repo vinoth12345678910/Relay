@@ -137,7 +137,9 @@ export async function request<T>(opts: RequestOptions<T>): Promise<ApiResponse<T
   if (!res.ok) {
     const parsed = ApiErrorBodySchema.safeParse(await readJson(res));
     const error = new ApiError(res.status, parsed.success ? parsed.data : null);
-    if (res.status === 401 && auth.isApiKey) {
+    // Only expire the session that sent this request: a late 401 for an old key must not
+    // wipe a key the user connected with in the meantime.
+    if (res.status === 401 && auth.isApiKey && session.get()?.apiKey === auth.token) {
       session.expire(UNAUTHORIZED_NOTICE);
     }
     throw error;

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { canReplay, filtersFromParams, mergePages, withDelivery, withFilter } from './filters';
+import {
+  canReplay,
+  filtersFromParams,
+  mergePages,
+  replayTone,
+  withDelivery,
+  withFilter,
+} from './filters';
 
 describe('delivery filters', () => {
   it('reads valid filters from the URL and drops ones the API would reject', () => {
@@ -30,6 +37,17 @@ describe('delivery filters', () => {
         { items: [{ id: 'b' }, { id: 'c' }] },
       ]).map((x) => x.id),
     ).toEqual(['a', 'b', 'c']);
+  });
+
+  it('presents a replay as a warning when the endpoint is paused or deleted', () => {
+    const eps = [
+      { id: 'a', status: 'ACTIVE' },
+      { id: 'p', status: 'PAUSED' },
+    ];
+    expect(replayTone(eps, 'a')).toBe('success');
+    expect(replayTone(eps, 'p')).toBe('warning');
+    expect(replayTone(eps, 'gone')).toBe('warning');
+    expect(replayTone(undefined, 'a')).toBe('success');
   });
 
   it('allows replay only for DEAD and SUCCEEDED', () => {

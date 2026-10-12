@@ -4,7 +4,7 @@ import type { Delivery } from '@/api/schemas';
 import { DeliveryStatusBadge } from '@/components/StatusBadge';
 import { CopyableId } from '@/components/ui/CopyButton';
 import { RelativeTime } from '@/components/ui/RelativeTime';
-import { useEndpointLookup } from '@/features/endpoints/useEndpointLookup';
+import { EndpointLabel } from '@/features/endpoints/EndpointLabel';
 
 export function DeliveryTable({
   deliveries,
@@ -13,7 +13,6 @@ export function DeliveryTable({
   deliveries: Delivery[];
   onOpen: (id: string) => void;
 }) {
-  const endpoint = useEndpointLookup();
   return (
     <div className="relative overflow-x-auto rounded-lg border border-border bg-surface">
       <table className="w-full min-w-[860px] text-left text-sm">
@@ -55,13 +54,8 @@ export function DeliveryTable({
               <td className="px-4 py-2.5">
                 <DeliveryStatusBadge status={d.status} />
               </td>
-              <td
-                className="max-w-[220px] truncate px-4 py-2.5 font-mono text-xs"
-                title={endpoint(d.endpointId)?.url}
-              >
-                {endpoint(d.endpointId)?.url ?? (
-                  <span className="text-muted">deleted endpoint</span>
-                )}
+              <td className="max-w-[220px] truncate px-4 py-2.5 font-mono text-xs">
+                <EndpointLabel id={d.endpointId} />
               </td>
               <td className="px-4 py-2.5">
                 <Link

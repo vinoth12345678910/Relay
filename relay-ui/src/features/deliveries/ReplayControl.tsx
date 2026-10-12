@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Notice } from '@/components/ui/Feedback';
 import { useToast } from '@/components/ui/Toast';
-import { canReplay } from './filters';
+import { useEndpoints } from '@/features/endpoints/queries';
+import { canReplay, replayTone } from './filters';
 import { useReplay } from './queries';
 
 type Outcome = { tone: 'success' | 'warning' | 'danger'; text: string } | null;
@@ -25,6 +26,7 @@ export function ReplayControl({
 }) {
   const toast = useToast();
   const replay = useReplay();
+  const endpoints = useEndpoints();
   const [confirming, setConfirming] = useState(false);
   const [outcome, setOutcome] = useState<Outcome>(null);
   const allowed = canReplay(status);
@@ -32,9 +34,13 @@ export function ReplayControl({
   const run = () =>
     replay.mutate(deliveryId, {
       onSuccess: (r) => {
-        const paused = /PAUSED|deleted/.test(r.message);
-        setOutcome({ tone: paused ? 'warning' : 'success', text: r.message });
-        toast.show({ tone: 'success', title: 'Replay queued', detail: r.message });
+        const tone = replayTone(endpoints.data, r.delivery.endpointId);
+        setOutcome({ tone, text: r.message });
+        toast.show({
+          tone: tone === 'warning' ? 'info' : 'success',
+          title: 'Replay queued',
+          detail: r.message,
+        });
       },
       onError: (e) => {
         const text = isApiError(e, 409)

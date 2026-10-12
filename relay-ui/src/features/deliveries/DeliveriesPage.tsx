@@ -1,5 +1,6 @@
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useSearchParams } from 'react-router';
+import { isId } from '@/lib/json';
 import { Button } from '@/components/ui/Button';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/Feedback';
 import { DeliveryDrawer } from './DeliveryDrawer';
@@ -14,7 +15,9 @@ export function DeliveriesPage() {
   const filters = filtersFromParams(params);
   const list = useDeliveryList(filters);
   const rows = list.data ? mergePages(list.data.pages) : [];
-  const openId = params.get('delivery');
+  // A malformed ?delivery= link is ignored rather than sent to the API (which would answer 400).
+  const rawOpen = params.get('delivery');
+  const openId = isId(rawOpen) ? rawOpen : null;
   const filtered = Boolean(filters.status || filters.endpointId);
 
   return (

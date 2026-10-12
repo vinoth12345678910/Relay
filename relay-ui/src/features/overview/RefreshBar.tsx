@@ -10,6 +10,7 @@ export function RefreshBar({
   fetching,
   onToggle,
   onRefresh,
+  intervalMs,
 }: {
   lastUpdated: number | null;
   paused: boolean;
@@ -17,13 +18,14 @@ export function RefreshBar({
   fetching: boolean;
   onToggle: () => void;
   onRefresh: () => void;
+  intervalMs: number;
 }) {
   const now = useNow(1_000);
   const state = paused
     ? 'Auto-refresh paused'
     : !visible
       ? 'Auto-refresh waits while this tab is hidden'
-      : 'Auto-refresh every 10 s';
+      : `Auto-refresh every ${intervalMs / 1000} s`;
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
       <span role="status" aria-live="off" data-testid="last-updated">
@@ -33,7 +35,7 @@ export function RefreshBar({
       </span>
       <span aria-hidden>·</span>
       <span>{state}</span>
-      <Button size="sm" variant="ghost" onClick={onToggle} aria-pressed={paused}>
+      <Button size="sm" variant="ghost" onClick={onToggle}>
         {paused ? (
           <Play aria-hidden className="size-3.5" />
         ) : (

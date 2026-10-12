@@ -1,5 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDelivery, listAttempts, listDeliveries, replayDelivery } from '@/api/client';
+import { eventKeys } from '@/features/events/queries';
+import { overviewKeys } from '@/features/overview/queries';
 import type { DeliveryFilterState } from './filters';
 
 export const PAGE_SIZE = 50;
@@ -49,8 +51,8 @@ export function useReplay() {
     },
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: deliveryKeys.all });
-      void qc.invalidateQueries({ queryKey: ['event'] });
-      void qc.invalidateQueries({ queryKey: ['overview'] });
+      void qc.invalidateQueries({ queryKey: eventKeys.all });
+      void qc.invalidateQueries({ queryKey: overviewKeys.all });
     },
   });
 }

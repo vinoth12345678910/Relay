@@ -35,10 +35,6 @@ export const recentEvents = {
       listeners.delete(l);
     };
   },
-  clear() {
-    items = [];
-    emit();
-  },
 };
 
 export function useRecentEvents(): RecentEvent[] {

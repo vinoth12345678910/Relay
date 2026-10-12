@@ -24,6 +24,19 @@ export function analyzePayload(text: string): PayloadAnalysis {
   return { ok: true, value, compactBytes: utf8Bytes(JSON.stringify(value)) };
 }
 
+const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Relay ids are UUIDs; anything else would only earn a 400 from the API. */
+export const isId = (v: string | null | undefined): v is string =>
+  typeof v === 'string' && GUID.test(v);
+
+export type SizeVerdict = { ratio: number; over: boolean; near: boolean };
+
+/** Where a compact payload size sits against the 256 KB limit (warn from 90%). */
+export function sizeVerdict(compactBytes: number, limit: number): SizeVerdict {
+  const ratio = compactBytes / limit;
+  return { ratio, over: ratio > 1, near: ratio >= 0.9 };
+}
+
 export function prettyJson(value: unknown): string {
   return JSON.stringify(value, null, 2);
 }

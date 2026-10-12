@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { analyzePayload } from './json';
+import { analyzePayload, sizeVerdict } from './json';
+
+describe('sizeVerdict', () => {
+  it('warns from 90% and flags over the limit', () => {
+    expect(sizeVerdict(89, 100)).toMatchObject({ near: false, over: false });
+    expect(sizeVerdict(90, 100)).toMatchObject({ near: true, over: false });
+    expect(sizeVerdict(101, 100)).toMatchObject({ near: true, over: true });
+  });
+});
 
 describe('analyzePayload', () => {
   it('accepts any JSON value except null and measures compact UTF-8 bytes', () => {

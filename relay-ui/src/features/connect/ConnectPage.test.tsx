@@ -67,7 +67,7 @@ describe('Connect screen', () => {
     const consoleSpy = vi.spyOn(console, 'log');
     const urls: string[] = [];
     server.events.on('request:start', ({ request }) => urls.push(request.url));
-    const { user } = renderApp('/connect', { connected: false });
+    const { user, queryClient } = renderApp('/connect', { connected: false });
     await user.type(screen.getByLabelText('App name'), 'shop');
     const token = screen.getByLabelText('Admin token');
     expect(token).toHaveAttribute('type', 'password');
@@ -84,6 +84,15 @@ describe('Connect screen', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.queryByText(key)).not.toBeInTheDocument();
     expect(urls.some((u) => u.includes('dev-admin-token') || u.includes(key))).toBe(false);
+    // Neither the admin token nor the new key lingers in TanStack's caches.
+    const caches = JSON.stringify(
+      queryClient
+        .getMutationCache()
+        .getAll()
+        .map((m) => [m.state.variables, m.state.data]),
+    );
+    expect(caches).not.toContain('dev-admin-token');
+    expect(caches).not.toContain(key);
     expect(consoleSpy).not.toHaveBeenCalled();
     expect(window.localStorage.length).toBe(0);
     expect(window.sessionStorage.length).toBe(0);

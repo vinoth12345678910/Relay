@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => {
     },
     preview: { port: 4173, strictPort: true, headers: { 'Content-Security-Policy': CSP } },
     build: {
-      sourcemap: true,
+      // No public source maps in the real build (nginx would serve them); keep them for mock/e2e debugging.
+      sourcemap: mode === 'mock',
       rollupOptions: {
         // zod ships comments Rollup cannot place; harmless, but it floods CI logs.
         onwarn(warning, warn) {

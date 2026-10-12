@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { createApp } from '@/api/client';
-import { describeError, isApiError } from '@/api/errors';
+import { describeError, isApiError, sentence } from '@/api/errors';
 import type { CreateAppResponse } from '@/api/schemas';
 import { Button } from '@/components/ui/Button';
 import { Field, inputClass, monoInputClass } from '@/components/ui/Field';
+import { useCredentialMutation } from '@/lib/useCredentialMutation';
 import { ApiKeyOnceDialog } from './ApiKeyOnceDialog';
 import { createAppSchema, type CreateAppValues } from './schema';
 
@@ -18,7 +18,8 @@ export function CreateAppPanel({
   baseUrl,
   onConnect,
 }: {
-  baseUrl: string;
+  /** Validated base URL from the Connect form, or null while that field is invalid. */
+  baseUrl: string | null;
   onConnect: (apiKey: string) => void;
 }) {
   const [created, setCreated] = useState<CreateAppResponse | null>(null);
@@ -34,34 +35,39 @@ export function CreateAppPanel({
     formState: { errors },
   } = form;
 
-  const mutation = useMutation({
-    mutationFn: (v: CreateAppValues) =>
-      createApp({ name: v.name, adminToken: v.adminToken, baseUrl }),
-    onSettled: () => setValue('adminToken', ''),
-    onSuccess: (app) => {
-      form.reset({ name: '', adminToken: '' });
-      setCreated(app);
+  const mutation = useCredentialMutation(
+    (v: CreateAppValues & { baseUrl: string }) =>
+      createApp({ name: v.name, adminToken: v.adminToken, baseUrl: v.baseUrl }),
+    {
+      onSettled: () => setValue('adminToken', ''),
+      onSuccess: (app) => {
+        form.reset({ name: '', adminToken: '' });
+        setCreated(app);
+      },
+      onError: (e) => {
+        if (isApiError(e, 401))
+          setError('adminToken', { message: 'Relay rejected the admin token.' });
+        else {
+          const d = describeError(e);
+          const nameErr = d.fieldErrors.find((f) => f.field === 'name');
+          setError(nameErr ? 'name' : 'root', {
+            message: nameErr?.message ?? `${sentence(d.title)} ${sentence(d.detail)}`,
+          });
+        }
+      },
     },
-    onError: (e) => {
-      if (isApiError(e, 401))
-        setError('adminToken', { message: 'Relay rejected the admin token.' });
-      else {
-        const d = describeError(e);
-        const nameErr = d.fieldErrors.find((f) => f.field === 'name');
-        setError(nameErr ? 'name' : 'root', {
-          message: nameErr?.message ?? `${d.title}: ${d.detail}`,
-        });
-      }
-    },
+  );
+  const submit = handleSubmit((v) => {
+    if (baseUrl === null) {
+      setError('root', { message: 'Fix the API base URL above first.' });
+      return;
+    }
+    mutation.mutate({ ...v, baseUrl });
   });
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit((v) => mutation.mutate(v))}
-        noValidate
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={submit} noValidate className="flex flex-col gap-4">
         <Field label="App name" error={errors.name?.message}>
           <input
             {...register('name')}

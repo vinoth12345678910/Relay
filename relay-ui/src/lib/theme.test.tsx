@@ -16,4 +16,11 @@ describe('theme', () => {
     act(() => result.current.cycle());
     expect(localStorage.length).toBe(0);
   });
+
+  it('every toggle on screen shares one preference', () => {
+    const a = renderHook(() => useTheme());
+    const b = renderHook(() => useTheme());
+    act(() => a.result.current.cycle());
+    expect(b.result.current.preference).toBe('light');
+  });
 });

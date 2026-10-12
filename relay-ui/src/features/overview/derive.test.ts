@@ -44,6 +44,7 @@ describe('overview derivations', () => {
           d('active', '2026-10-12T09:50:00Z'), // 10 min late
           d('active', '2026-10-12T09:59:30Z'), // 30 s: within grace
           d('paused', '2026-10-12T08:00:00Z'), // waits on purpose
+          d('deleted', '2026-10-12T07:00:00Z'), // endpoint gone: never claimed, not a backlog
         ],
         nextCursor: null,
       },
@@ -54,6 +55,7 @@ describe('overview derivations', () => {
       overdue: 1,
       oldestOverdueMs: 600_000,
       waitingOnPaused: 1,
+      orphaned: 1,
       sampled: false,
       state: 'backlog',
     });

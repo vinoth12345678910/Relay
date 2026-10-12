@@ -44,6 +44,12 @@ export function QueueHealthCard({
         </dd>
         <dt className="text-muted">Waiting on paused endpoints</dt>
         <dd className="text-right font-medium">{h.waitingOnPaused}</dd>
+        {h.orphaned > 0 && (
+          <>
+            <dt className="text-muted">Stuck on deleted endpoints (never sent)</dt>
+            <dd className="text-right font-medium">{h.orphaned}</dd>
+          </>
+        )}
         <dt className="text-muted">In flight now</dt>
         <dd className="text-right font-medium">
           {inFlight.items.length}

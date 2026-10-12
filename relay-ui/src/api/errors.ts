@@ -49,7 +49,8 @@ function describeApiError(e: ApiError): ErrorDescription {
       return {
         ...base,
         title: 'Request not understood',
-        detail: 'Relay could not read the request body.',
+        detail:
+          'Relay could not read the request: a malformed body, or an invalid id or parameter.',
       };
     case 'UNAUTHORIZED':
       return { ...base, title: 'Not authorized', detail: e.message };
@@ -87,7 +88,7 @@ export function describeError(e: unknown): ErrorDescription {
       detail:
         e.baseUrl === ''
           ? 'The request did not get an answer. Is relay-server running (the dev proxy forwards /api to it)?'
-          : `The request to ${e.baseUrl} did not get an answer. Check the URL, that the backend is running, and CORS.`,
+          : `The request to ${e.baseUrl} did not get an answer. Check the URL, that the backend is running, CORS, and (in the nginx image) the CSP connect-src.`,
       fieldErrors: [],
     };
   }

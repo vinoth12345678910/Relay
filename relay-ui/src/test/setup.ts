@@ -4,6 +4,7 @@ import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 import { server } from '@/mocks/node';
 import { resetDb } from '@/mocks/seed';
 import { session } from '@/session/store';
+import { themeStore } from '@/lib/theme';
 
 // jsdom lacks these; Radix and the theme hook use them.
 if (!window.matchMedia) {
@@ -36,5 +37,6 @@ afterEach(() => {
   session.reset();
   window.sessionStorage.clear();
   window.localStorage.clear();
+  themeStore.reset();
 });
 afterAll(() => server.close());

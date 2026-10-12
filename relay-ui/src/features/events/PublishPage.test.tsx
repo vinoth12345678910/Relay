@@ -121,6 +121,17 @@ describe('Event detail', () => {
     expect(within(table).getAllByText('Pending')).toHaveLength(2);
   });
 
+  it('rejects a malformed id without calling the API', async () => {
+    let calls = 0;
+    server.events.on('request:start', ({ request }) => {
+      if (request.url.includes('/events/')) calls++;
+    });
+    renderApp('/events/not-a-uuid');
+    expect(await screen.findByText('Not a valid event id')).toBeInTheDocument();
+    expect(calls).toBe(0);
+    server.events.removeAllListeners();
+  });
+
   it('shows a friendly not-found for an unknown id', async () => {
     renderApp('/events/00000000-0000-4000-8000-0000000fffff');
     expect(await screen.findByText('Not found')).toBeInTheDocument();

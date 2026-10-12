@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { CircleAlert, CircleCheck, X } from 'lucide-react';
+import { CircleAlert, CircleCheck, Info, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 type Tone = 'success' | 'error' | 'info';
@@ -58,7 +58,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: number) => void }) {
-  const Icon = toast.tone === 'error' ? CircleAlert : CircleCheck;
+  const Icon = toast.tone === 'error' ? CircleAlert : toast.tone === 'info' ? Info : CircleCheck;
   return (
     <div
       className={cn(
@@ -70,7 +70,11 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: (id: number) => 
         aria-hidden
         className={cn(
           'mt-0.5 size-4 shrink-0',
-          toast.tone === 'error' ? 'text-danger' : 'text-success',
+          toast.tone === 'error'
+            ? 'text-danger'
+            : toast.tone === 'info'
+              ? 'text-warning'
+              : 'text-success',
         )}
       />
       <div className="min-w-0 flex-1">

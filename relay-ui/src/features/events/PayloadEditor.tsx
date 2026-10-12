@@ -3,11 +3,10 @@ import { CircleCheck, CircleAlert } from 'lucide-react';
 import { MAX_PAYLOAD_BYTES } from '@/api/schemas';
 import { formatBytes } from '@/lib/bytes';
 import { cn } from '@/lib/cn';
-import { analyzePayload } from '@/lib/json';
+import { sizeVerdict, type PayloadAnalysis } from '@/lib/json';
 
 /** Live JSON status + size against the 256 KB limit, announced politely to screen readers. */
-export function PayloadStatus({ text }: { text: string }) {
-  const a = analyzePayload(text);
+export function PayloadStatus({ analysis: a }: { analysis: PayloadAnalysis }) {
   if (!a.ok) {
     return (
       <p aria-live="polite" className="flex items-center gap-1.5 text-xs text-danger">
@@ -15,9 +14,7 @@ export function PayloadStatus({ text }: { text: string }) {
       </p>
     );
   }
-  const ratio = a.compactBytes / MAX_PAYLOAD_BYTES;
-  const over = ratio > 1;
-  const near = ratio >= 0.9;
+  const { ratio, over, near } = sizeVerdict(a.compactBytes, MAX_PAYLOAD_BYTES);
   return (
     <div aria-live="polite" className="flex flex-col gap-1">
       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">

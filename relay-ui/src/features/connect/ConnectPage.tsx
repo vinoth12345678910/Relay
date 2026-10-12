@@ -2,7 +2,6 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import { KeyRound } from 'lucide-react';
 import { verifyApiKey } from '@/api/client';
@@ -12,7 +11,8 @@ import { Notice } from '@/components/ui/Feedback';
 import { session, useSession } from '@/session/store';
 import { ConnectForm } from './ConnectForm';
 import { CreateAppPanel } from './CreateAppPanel';
-import { connectSchema, type ConnectInput, type ConnectValues } from './schema';
+import { baseUrlSchema, connectSchema, type ConnectInput, type ConnectValues } from './schema';
+import { useCredentialMutation } from '@/lib/useCredentialMutation';
 
 function safeReturnPath(state: unknown): string {
   const from = typeof state === 'object' && state !== null && 'from' in state ? state.from : null;
@@ -33,25 +33,28 @@ export function ConnectPage() {
   });
   const returnTo = safeReturnPath(location.state);
 
-  const connect = useMutation({
-    mutationFn: (v: ConnectValues) => verifyApiKey({ apiKey: v.apiKey, baseUrl: v.baseUrl }),
-    onMutate: () => setFormError(null),
-    onSuccess: (_data, v) => {
-      session.connect({ apiKey: v.apiKey, baseUrl: v.baseUrl, remember: v.remember });
-      form.reset({ baseUrl: v.baseUrl, apiKey: '', remember: v.remember });
-      navigate(returnTo, { replace: true });
+  const connect = useCredentialMutation(
+    (v: ConnectValues) => verifyApiKey({ apiKey: v.apiKey, baseUrl: v.baseUrl }),
+    {
+      onSuccess: (_data, v) => {
+        session.connect({ apiKey: v.apiKey, baseUrl: v.baseUrl, remember: v.remember });
+        form.reset({ baseUrl: v.baseUrl, apiKey: '', remember: v.remember });
+        navigate(returnTo, { replace: true });
+      },
+      onError: (e) => {
+        if (isApiError(e, 401))
+          form.setError('apiKey', {
+            message: 'Relay rejected this API key. Check it belongs to this server.',
+          });
+        else {
+          const d = describeError(e);
+          setFormError(`${sentence(d.title)} ${sentence(d.detail)}`);
+        }
+      },
     },
-    onError: (e) => {
-      if (isApiError(e, 401))
-        form.setError('apiKey', {
-          message: 'Relay rejected this API key. Check it belongs to this server.',
-        });
-      else {
-        const d = describeError(e);
-        setFormError(`${sentence(d.title)} ${sentence(d.detail)}`);
-      }
-    },
-  });
+  );
+  const parsedBaseUrl = baseUrlSchema.safeParse(form.watch('baseUrl'));
+  const validBaseUrl = parsedBaseUrl.success ? parsedBaseUrl.data : null;
 
   if (current !== null && !connect.isPending) return <Navigate to={returnTo} replace />;
 
@@ -82,7 +85,10 @@ export function ConnectPage() {
           )}
           <ConnectForm
             form={form}
-            onSubmit={(v) => connect.mutate(v)}
+            onSubmit={(v) => {
+              setFormError(null);
+              connect.mutate(v);
+            }}
             pending={connect.isPending}
             formError={formError}
           />
@@ -98,13 +104,13 @@ export function ConnectPage() {
             Needs the server&apos;s admin token. You get the new app&apos;s API key once.
           </p>
           <CreateAppPanel
-            baseUrl={form.watch('baseUrl').trim().replace(/\/+$/, '')}
+            baseUrl={validBaseUrl}
             onConnect={(apiKey) => {
-              const v = form.getValues();
+              if (validBaseUrl === null) return;
               session.connect({
                 apiKey,
-                baseUrl: v.baseUrl.trim().replace(/\/+$/, ''),
-                remember: v.remember,
+                baseUrl: validBaseUrl,
+                remember: form.getValues('remember'),
               });
               navigate('/', { replace: true });
             }}

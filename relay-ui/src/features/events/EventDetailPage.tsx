@@ -5,7 +5,7 @@ import { CodeBlock } from '@/components/ui/CodeBlock';
 import { CopyableId, CopyButton } from '@/components/ui/CopyButton';
 import { ErrorState, ListSkeleton, Skeleton } from '@/components/ui/Feedback';
 import { RelativeTime } from '@/components/ui/RelativeTime';
-import { prettyJson } from '@/lib/json';
+import { isId, prettyJson } from '@/lib/json';
 import { EventDeliveries } from './EventDeliveries';
 import { useEvent } from './queries';
 
@@ -22,7 +22,13 @@ export function EventDetailPage() {
       >
         <ArrowLeft aria-hidden className="size-4" /> Events
       </Link>
-      {event.isPending ? (
+      {!isId(id) ? (
+        <ErrorState
+          error={null}
+          title="Not a valid event id"
+          detail="Event ids are UUIDs, like 4f1c2a3b-0000-4000-8000-000000000000."
+        />
+      ) : event.isPending ? (
         <div className="flex flex-col gap-3" role="status" aria-label="Loading event">
           <Skeleton className="h-7 w-64" />
           <Skeleton className="h-40 w-full" />

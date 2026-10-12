@@ -43,12 +43,18 @@ export function ErrorState({
   error,
   onRetry,
   className,
+  title,
+  detail,
 }: {
   error: unknown;
   onRetry?: () => void;
   className?: string;
+  /** Override the derived text, e.g. for a client-side validation failure. */
+  title?: string;
+  detail?: string;
 }) {
-  const d = describeError(error);
+  const described = describeError(error);
+  const d = { title: title ?? described.title, detail: detail ?? described.detail };
   return (
     <div
       role="alert"

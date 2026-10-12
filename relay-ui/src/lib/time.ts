@@ -20,11 +20,10 @@ export function formatRelative(iso: string, now: number): string {
 }
 
 /** Absolute local time with the zone, e.g. "12 Oct 2026, 11:02:03 UTC". */
+const absoluteFormat = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'long' });
+
 export function formatAbsolute(iso: string): string {
-  return new Intl.DateTimeFormat('en-GB', {
-    dateStyle: 'medium',
-    timeStyle: 'long',
-  }).format(new Date(iso));
+  return absoluteFormat.format(new Date(iso));
 }
 
 export function formatDuration(ms: number): string {

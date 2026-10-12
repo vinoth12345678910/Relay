@@ -18,6 +18,8 @@ export type QueueHealth = {
   oldestOverdueMs: number | null;
   /** PENDING deliveries waiting on a paused endpoint: expected to wait. */
   waitingOnPaused: number;
+  /** PENDING deliveries whose endpoint was deleted: the claimer skips them, they will never send. */
+  orphaned: number;
   /** True when the sample was capped, so numbers are lower bounds. */
   sampled: boolean;
   state: 'healthy' | 'backlog' | 'idle';
@@ -26,19 +28,27 @@ export type QueueHealth = {
 /**
  * Queue health derived from the newest PENDING deliveries (Relay has no stats endpoint).
  * Deliveries to PAUSED endpoints are excluded from "overdue": holding them is the breaker working.
+ * Deliveries to endpoints missing from the list (deleted, so DISABLED) are counted apart: the
+ * backend only claims deliveries of ACTIVE endpoints, so they stay PENDING forever by design.
  */
 export function deriveQueueHealth(
   pending: DeliveryPage,
   endpoints: Endpoint[],
   now: number,
 ): QueueHealth {
-  const paused = new Set(endpoints.filter((e) => e.status === 'PAUSED').map((e) => e.id));
+  const status = new Map(endpoints.map((e) => [e.id, e.status]));
   let overdue = 0;
   let waitingOnPaused = 0;
+  let orphaned = 0;
   let oldest: number | null = null;
   for (const d of pending.items) {
-    if (paused.has(d.endpointId)) {
+    const s = status.get(d.endpointId);
+    if (s === 'PAUSED') {
       waitingOnPaused++;
+      continue;
+    }
+    if (s === undefined || s === 'DISABLED') {
+      orphaned++;
       continue;
     }
     const late = now - Date.parse(d.nextAttemptAt);
@@ -52,6 +62,7 @@ export function deriveQueueHealth(
     overdue,
     oldestOverdueMs: oldest,
     waitingOnPaused,
+    orphaned,
     sampled: pending.nextCursor !== null,
     state,
   };

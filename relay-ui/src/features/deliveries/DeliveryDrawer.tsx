@@ -6,7 +6,7 @@ import { CopyableId } from '@/components/ui/CopyButton';
 import { Drawer } from '@/components/ui/Drawer';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/Feedback';
 import { RelativeTime } from '@/components/ui/RelativeTime';
-import { useEndpointLookup } from '@/features/endpoints/useEndpointLookup';
+import { EndpointLabel } from '@/features/endpoints/EndpointLabel';
 import { AttemptTimeline } from './AttemptTimeline';
 import { ReplayControl } from './ReplayControl';
 import { useAttempts, useDelivery } from './queries';
@@ -21,7 +21,6 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function Summary({ d }: { d: Delivery }) {
-  const endpoint = useEndpointLookup()(d.endpointId);
   const due = d.status === 'PENDING' || d.status === 'IN_FLIGHT';
   return (
     <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
@@ -43,8 +42,8 @@ function Summary({ d }: { d: Delivery }) {
         </span>
       </Row>
       <Row label="Endpoint">
-        <span className="block truncate font-mono text-xs" title={endpoint?.url}>
-          {endpoint?.url ?? 'deleted endpoint'}
+        <span className="block truncate font-mono text-xs">
+          <EndpointLabel id={d.endpointId} />
         </span>
         <CopyableId value={d.endpointId} label="endpoint id" short />
       </Row>

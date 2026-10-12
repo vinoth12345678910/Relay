@@ -49,4 +49,18 @@ export function mergePages<T extends { id: string }>(pages: ReadonlyArray<{ item
   return out;
 }
 
+/**
+ * How a successful replay should be presented. Decided from the endpoint list (structured data),
+ * not by parsing the backend's message: a PAUSED endpoint holds the delivery until resumed, and an
+ * endpoint missing from the list was deleted, so the delivery will never be sent.
+ */
+export function replayTone(
+  endpoints: ReadonlyArray<{ id: string; status: string }> | undefined,
+  endpointId: string,
+): 'success' | 'warning' {
+  if (!endpoints) return 'success';
+  const e = endpoints.find((x) => x.id === endpointId);
+  return !e || e.status !== 'ACTIVE' ? 'warning' : 'success';
+}
+
 export const canReplay = (status: DeliveryStatus) => status === 'DEAD' || status === 'SUCCEEDED';

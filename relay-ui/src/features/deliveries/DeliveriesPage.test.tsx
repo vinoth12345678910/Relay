@@ -63,6 +63,18 @@ describe('Deliveries list', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it('never labels endpoints "deleted" just because the endpoint list failed', async () => {
+    server.use(
+      http.get('*/api/v1/endpoints', ({ request }) => apiError(request, 404, 'NOT_FOUND', 'nope')),
+    );
+    renderApp('/deliveries');
+    const table = await screen.findByRole('table', { name: /Deliveries/ });
+    await waitFor(() =>
+      expect(within(table).getAllByText(/unknown endpoint/).length).toBeGreaterThan(0),
+    );
+    expect(within(table).queryByText('deleted endpoint')).not.toBeInTheDocument();
+  });
+
   it('shows a filtered empty state', async () => {
     renderApp(`/deliveries?endpointId=${db.current.endpoints[2]!.id}`);
     expect(await screen.findByText('No deliveries match these filters')).toBeInTheDocument();

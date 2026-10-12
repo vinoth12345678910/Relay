@@ -42,10 +42,12 @@ export function ConnectForm({
       </Field>
       {crossOrigin && (
         <Notice tone="warning">
-          Cross-origin mode needs CORS on the backend. Relay&apos;s dev CORS config allows only{' '}
+          Cross-origin mode needs CORS on the backend, and Relay&apos;s dev CORS config allows only{' '}
           <code className="font-mono">Authorization</code> and{' '}
-          <code className="font-mono">Content-Type</code>, so sending an Idempotency-Key will fail.
-          Prefer the same-origin proxy.
+          <code className="font-mono">Content-Type</code>, so an Idempotency-Key cannot be sent. The
+          nginx image&apos;s CSP also blocks other origins (
+          <code className="font-mono">connect-src &apos;self&apos;</code>). Prefer the same-origin
+          proxy.
         </Notice>
       )}
       <Field

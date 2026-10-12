@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Braces, Dices, Send } from 'lucide-react';
@@ -25,6 +26,8 @@ export function PublishForm({ onPublish, newKey }: { onPublish: Submit; newKey: 
   const { register, handleSubmit, setValue, setError, watch, formState } = form;
   const { errors, isSubmitting } = formState;
   const payloadText = watch('payload');
+  // Parsed once per change and shared by the status line and the Format button.
+  const analysis = useMemo(() => analyzePayload(payloadText), [payloadText]);
 
   const submit = handleSubmit(async (v) => {
     const parsed = analyzePayload(v.payload);
@@ -53,8 +56,7 @@ export function PublishForm({ onPublish, newKey }: { onPublish: Submit; newKey: 
   });
 
   const format = () => {
-    const a = analyzePayload(payloadText);
-    if (a.ok) setValue('payload', prettyJson(a.value), { shouldValidate: true });
+    if (analysis.ok) setValue('payload', prettyJson(analysis.value), { shouldValidate: true });
   };
 
   return (
@@ -74,17 +76,12 @@ export function PublishForm({ onPublish, newKey }: { onPublish: Submit; newKey: 
       <Field
         label="Payload (JSON)"
         error={errors.payload?.message}
-        hint={<PayloadStatus text={payloadText} />}
+        hint={<PayloadStatus analysis={analysis} />}
       >
         <PayloadTextarea {...register('payload')} />
       </Field>
       <div className="-mt-2 flex">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={format}
-          disabled={!analyzePayload(payloadText).ok}
-        >
+        <Button size="sm" variant="ghost" onClick={format} disabled={!analysis.ok}>
           <Braces aria-hidden className="size-3.5" /> Format JSON
         </Button>
       </div>

@@ -12,6 +12,10 @@ on:
       - '.github/workflows/ui.yml'
       - 'relay-server/src/main/java/**'
 
+# Read-only token: the jobs only check out and test.
+permissions:
+  contents: read
+
 defaults:
   run:
     working-directory: relay-ui

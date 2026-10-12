@@ -97,9 +97,6 @@ export const session = {
     notice = null;
     return n;
   },
-  peekNotice(): string | null {
-    return notice;
-  },
   subscribe(listener: () => void) {
     listeners.add(listener);
     return () => {

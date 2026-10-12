@@ -76,10 +76,7 @@ describe('Overview', () => {
     await waitFor(() => expect(counter.n).toBe(initial + 1));
 
     await user.click(screen.getByRole('button', { name: 'Pause auto-refresh' }));
-    expect(screen.getByRole('button', { name: 'Resume auto-refresh' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    expect(screen.getByText('Auto-refresh paused')).toBeInTheDocument();
     await act(() => vi.advanceTimersByTimeAsync(30_000));
     expect(counter.n).toBe(initial + 1);
 

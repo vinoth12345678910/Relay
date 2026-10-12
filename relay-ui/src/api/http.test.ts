@@ -79,3 +79,13 @@ describe('request wrapper', () => {
     );
   });
 });
+
+describe('stale 401', () => {
+  it('a late 401 for an old key does not wipe a newer session', async () => {
+    session.connect({ apiKey: 'rl_live_revoked_old', baseUrl: '', remember: false });
+    const pending = listEndpoints().catch((e: unknown) => e);
+    session.connect({ apiKey: 'rl_live_new_key', baseUrl: '', remember: false });
+    expect(await pending).toBeInstanceOf(ApiError);
+    expect(session.get()?.apiKey).toBe('rl_live_new_key');
+  });
+});

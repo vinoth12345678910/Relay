@@ -34,6 +34,7 @@ export function OverviewPage() {
           fetching={o.isFetching}
           onToggle={refresh.toggle}
           onRefresh={o.refetchAll}
+          intervalMs={OVERVIEW_REFRESH_MS}
         />
       </div>
       {empty ? (
@@ -59,8 +60,11 @@ export function OverviewPage() {
                 inFlight={IN_FLIGHT.data}
                 endpoints={o.endpoints.data}
               />
-            ) : PENDING.isError || o.endpoints.isError ? (
-              <ErrorState error={PENDING.error ?? o.endpoints.error} onRetry={o.refetchAll} />
+            ) : PENDING.isError || IN_FLIGHT.isError || o.endpoints.isError ? (
+              <ErrorState
+                error={PENDING.error ?? IN_FLIGHT.error ?? o.endpoints.error}
+                onRetry={o.refetchAll}
+              />
             ) : (
               <ListSkeleton rows={3} label="Loading queue health" />
             )}

@@ -7,6 +7,7 @@ import { useClock } from '@/lib/clock';
 import { SAMPLE_SIZE } from './derive';
 
 export const overviewKeys = {
+  all: ['overview'] as const,
   status: (s: DeliveryStatus) => ['overview', 'status', s] as const,
 };
 

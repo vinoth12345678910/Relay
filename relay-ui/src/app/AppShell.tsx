@@ -1,12 +1,16 @@
 import { NavLink, Outlet } from 'react-router';
-import { Link2, LogOut, Monitor, Moon, Sun } from 'lucide-react';
+import { Inbox, Link2, LogOut, Monitor, Moon, Send, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/lib/theme';
 import { maskKey, session, useSession } from '@/session/store';
 
-const NAV = [{ to: '/endpoints', label: 'Endpoints', icon: Link2, end: false }];
+const NAV = [
+  { to: '/endpoints', label: 'Endpoints', icon: Link2, end: false },
+  { to: '/events/new', label: 'Publish', icon: Send, end: false },
+  { to: '/events', label: 'Events', icon: Inbox, end: true },
+];
 
 export function ThemeToggle() {
   const { preference, cycle } = useTheme();

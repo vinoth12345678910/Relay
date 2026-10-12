@@ -15,6 +15,7 @@ export function Field({
   children,
   className,
   optional,
+  addon,
 }: {
   label: string;
   hint?: ReactNode;
@@ -22,6 +23,8 @@ export function Field({
   children: ReactElement<ControlProps>;
   className?: string;
   optional?: boolean;
+  /** Rendered beside the control (e.g. a "Generate" button); the label still targets the control. */
+  addon?: ReactNode;
 }) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
@@ -40,7 +43,14 @@ export function Field({
         {label}
         {optional && <span className="ml-1 font-normal text-muted">(optional)</span>}
       </label>
-      {control}
+      {addon ? (
+        <div className="flex gap-2">
+          {control}
+          {addon}
+        </div>
+      ) : (
+        control
+      )}
       {hint && (
         <div id={hintId} className="text-xs text-muted">
           {hint}

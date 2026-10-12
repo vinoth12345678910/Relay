@@ -99,3 +99,33 @@ export function seedDb(): Db {
 export function resetDb(seed = true) {
   db.current = seed ? seedDb() : createDb();
 }
+
+/** Test helper: appends `n` deliveries for the first endpoint, newest last. */
+export function addDeliveries(n: number, status: DeliveryStatus = 'SUCCEEDED') {
+  const d = db.current;
+  const endpoint = d.endpoints[0];
+  if (!endpoint) throw new Error('seed has no endpoint');
+  const eventId = nextId(d);
+  d.events.push({
+    id: eventId,
+    type: 'bulk.event',
+    payloadJson: '{}',
+    createdAt: nowIso(d),
+    idempotencyKey: null,
+  });
+  for (let i = 0; i < n; i++) {
+    const ts = nowIso(d);
+    d.deliveries.push({
+      id: nextId(d),
+      eventId,
+      endpointId: endpoint.id,
+      status,
+      attemptCount: 1,
+      attemptBase: 0,
+      nextAttemptAt: ts,
+      lastStatusCode: 200,
+      createdAt: ts,
+      updatedAt: ts,
+    });
+  }
+}

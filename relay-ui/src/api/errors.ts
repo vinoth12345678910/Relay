@@ -105,6 +105,12 @@ export function describeError(e: unknown): ErrorDescription {
   };
 }
 
+/** Ends text with a full stop unless it already ends with punctuation, for joining messages. */
+export function sentence(text: string): string {
+  const t = text.trim();
+  return /[.!?]$/.test(t) ? t : `${t}.`;
+}
+
 export function isApiError(e: unknown, status?: number): e is ApiError {
   return e instanceof ApiError && (status === undefined || e.status === status);
 }

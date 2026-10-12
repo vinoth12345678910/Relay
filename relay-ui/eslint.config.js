@@ -67,6 +67,8 @@ export default tseslint.config(
       'no-restricted-globals': 'off',
       'no-restricted-properties': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
+      // Tests read innerHTML to prove escaping; dangerouslySetInnerHTML stays banned.
+      'no-restricted-syntax': ['error', noInnerHtml[0]],
     },
   },
   {

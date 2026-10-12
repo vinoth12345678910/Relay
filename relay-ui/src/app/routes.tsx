@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 import { ConnectPage } from '@/features/connect/ConnectPage';
+import { DeliveriesPage } from '@/features/deliveries/DeliveriesPage';
 import { EndpointsPage } from '@/features/endpoints/EndpointsPage';
 import { EventDetailPage } from '@/features/events/EventDetailPage';
 import { EventsPage } from '@/features/events/EventsPage';
@@ -18,6 +19,7 @@ export function AppRoutes() {
           <Route path="events" element={<EventsPage />} />
           <Route path="events/new" element={<PublishPage />} />
           <Route path="events/:id" element={<EventDetailPage />} />
+          <Route path="deliveries" element={<DeliveriesPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { Inbox, Link2, LogOut, Monitor, Moon, Send, Sun } from 'lucide-react';
+import { Inbox, Link2, LogOut, Monitor, Moon, Send, Sun, Waypoints } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { cn } from '@/lib/cn';
@@ -10,6 +10,7 @@ const NAV = [
   { to: '/endpoints', label: 'Endpoints', icon: Link2, end: false },
   { to: '/events/new', label: 'Publish', icon: Send, end: false },
   { to: '/events', label: 'Events', icon: Inbox, end: true },
+  { to: '/deliveries', label: 'Deliveries', icon: Waypoints, end: false },
 ];
 
 export function ThemeToggle() {

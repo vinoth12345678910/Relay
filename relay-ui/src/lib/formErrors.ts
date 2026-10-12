@@ -1,5 +1,5 @@
 import type { FieldValues, Path, UseFormSetError } from 'react-hook-form';
-import { describeError, explainFieldError } from '@/api/errors';
+import { describeError, explainFieldError, sentence } from '@/api/errors';
 
 /**
  * Puts backend field errors on the matching inputs and anything else on the form root.
@@ -25,7 +25,8 @@ export function applyServerErrors<T extends FieldValues>(
   if (!placed || unplaced.length > 0) {
     setError('root.server' as Path<T>, {
       type: 'server',
-      message: unplaced.length > 0 ? unplaced.join(' ') : `${d.title}. ${d.detail}`,
+      message:
+        unplaced.length > 0 ? unplaced.join(' ') : `${sentence(d.title)} ${sentence(d.detail)}`,
     });
   }
   return placed;

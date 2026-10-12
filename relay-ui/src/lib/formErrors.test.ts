@@ -41,7 +41,7 @@ describe('applyServerErrors', () => {
     );
     expect(setError).toHaveBeenCalledWith('root.server', {
       type: 'server',
-      message: 'Conflict. Something conflicts',
+      message: 'Conflict. Something conflicts.',
     });
     const setError2 = vi.fn();
     applyServerErrors(new ApiError(400, body([{ field: 'other', message: 'nope' }])), setError2, [

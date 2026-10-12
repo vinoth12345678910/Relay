@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import type { DeliverySummary } from '@/api/schemas';
 import { DeliveryStatusBadge } from '@/components/StatusBadge';
 import { CopyableId } from '@/components/ui/CopyButton';
@@ -45,7 +46,16 @@ export function EventDeliveries({ deliveries }: { deliveries: DeliverySummary[] 
           {deliveries.map((d) => (
             <tr key={d.id} className="border-b border-border last:border-0">
               <td className="px-4 py-2.5">
-                <CopyableId value={d.id} label="delivery id" short />
+                <span className="flex items-center gap-1">
+                  <CopyableId value={d.id} label="delivery id" short />
+                  <Link
+                    to={`/deliveries?delivery=${d.id}`}
+                    className="text-xs text-accent underline underline-offset-2"
+                    aria-label={`Open delivery ${d.id.slice(0, 8)}`}
+                  >
+                    open
+                  </Link>
+                </span>
               </td>
               <td
                 className="max-w-[240px] truncate px-4 py-2.5 font-mono text-xs"

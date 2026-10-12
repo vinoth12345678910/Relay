@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import { KeyRound } from 'lucide-react';
 import { verifyApiKey } from '@/api/client';
-import { describeError, isApiError } from '@/api/errors';
+import { describeError, isApiError, sentence } from '@/api/errors';
 import { Logo, ThemeToggle } from '@/app/AppShell';
 import { Notice } from '@/components/ui/Feedback';
 import { session, useSession } from '@/session/store';
@@ -46,7 +46,7 @@ export function ConnectPage() {
         });
       else {
         const d = describeError(e);
-        setFormError(`${d.title}. ${d.detail}`);
+        setFormError(`${sentence(d.title)} ${sentence(d.detail)}`);
       }
     },
   });

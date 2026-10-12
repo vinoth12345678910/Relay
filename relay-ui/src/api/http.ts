@@ -116,7 +116,11 @@ export async function request<T>(opts: RequestOptions<T>): Promise<ApiResponse<T
     Authorization: `Bearer ${auth.token}`,
     ...opts.headers,
   };
-  if (opts.body !== undefined) headers['Content-Type'] = 'application/json';
+  // Also on bodyless POSTs (pause/resume/replay): that is exactly what relay-server's integration
+  // tests send, so it is the proven path for @RequestBody(required = false).
+  if (opts.body !== undefined || (opts.method !== undefined && opts.method !== 'GET')) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   let res: Response;
   try {

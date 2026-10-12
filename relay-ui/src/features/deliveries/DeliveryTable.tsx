@@ -15,7 +15,7 @@ export function DeliveryTable({
 }) {
   const endpoint = useEndpointLookup();
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+    <div className="relative overflow-x-auto rounded-lg border border-border bg-surface">
       <table className="w-full min-w-[860px] text-left text-sm">
         <caption className="sr-only">Deliveries, newest first</caption>
         <thead className="border-b border-border text-xs text-muted">

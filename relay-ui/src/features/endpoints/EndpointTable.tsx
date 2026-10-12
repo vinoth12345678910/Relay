@@ -12,7 +12,7 @@ export function EndpointTable({
   actions?: (e: Endpoint) => ReactNode;
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+    <div className="relative overflow-x-auto rounded-lg border border-border bg-surface">
       <table className="w-full min-w-[720px] text-left text-sm">
         <caption className="sr-only">Endpoints</caption>
         <thead className="border-b border-border text-xs text-muted">

@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +21,7 @@ function safeReturnPath(state: unknown): string {
 }
 
 export function ConnectPage() {
+  usePageTitle('Connect');
   const current = useSession();
   const navigate = useNavigate();
   const location = useLocation();

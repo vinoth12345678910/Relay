@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import { CodeBlock } from '@/components/ui/CodeBlock';
@@ -11,6 +12,7 @@ import { useEvent } from './queries';
 export function EventDetailPage() {
   const { id = '' } = useParams();
   const event = useEvent(id);
+  usePageTitle(event.data ? `Event ${event.data.type}` : 'Event');
 
   return (
     <div className="flex flex-col gap-5">

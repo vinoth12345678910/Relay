@@ -1,9 +1,11 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { Link } from 'react-router';
 import { Send } from 'lucide-react';
 import { OpenEventForm } from './OpenEventForm';
 import { RecentEventsList } from './RecentEventsList';
 
 export function EventsPage() {
+  usePageTitle('Events');
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3">

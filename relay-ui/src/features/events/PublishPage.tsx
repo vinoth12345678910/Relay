@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { PublishForm } from './PublishForm';
 import { PublishResult } from './PublishResult';
 import { OpenEventForm } from './OpenEventForm';
@@ -7,6 +8,7 @@ import { usePublishEvent } from './queries';
 const newIdempotencyKey = () => crypto.randomUUID();
 
 export function PublishPage() {
+  usePageTitle('Publish event');
   const publish = usePublishEvent();
   return (
     <div className="flex flex-col gap-5">

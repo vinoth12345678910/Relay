@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -11,6 +12,7 @@ import { useEndpoints } from './queries';
 import { useEndpointManager } from './useEndpointManager';
 
 export function EndpointsPage() {
+  usePageTitle('Endpoints');
   const endpoints = useEndpoints();
   const m = useEndpointManager();
   const addButton = (

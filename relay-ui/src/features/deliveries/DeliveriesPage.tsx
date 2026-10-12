@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/Feedback';
@@ -8,6 +9,7 @@ import { filtersFromParams, mergePages, withDelivery, withFilter } from './filte
 import { useDeliveryList } from './queries';
 
 export function DeliveriesPage() {
+  usePageTitle('Deliveries');
   const [params, setParams] = useSearchParams();
   const filters = filtersFromParams(params);
   const list = useDeliveryList(filters);

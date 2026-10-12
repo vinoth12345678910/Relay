@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router';
+import { Route, Routes, useLocation } from 'react-router';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ConnectPage } from '@/features/connect/ConnectPage';
 import { DeliveriesPage } from '@/features/deliveries/DeliveriesPage';
 import { EndpointsPage } from '@/features/endpoints/EndpointsPage';
@@ -10,21 +11,25 @@ import { AppShell } from './AppShell';
 import { RequireSession } from './RequireSession';
 
 export function AppRoutes() {
+  const { pathname } = useLocation();
   return (
-    <Routes>
-      <Route path="/connect" element={<ConnectPage />} />
-      <Route element={<RequireSession />}>
-        <Route element={<AppShell />}>
-          <Route index element={<OverviewPage />} />
-          <Route path="endpoints" element={<EndpointsPage />} />
-          <Route path="events" element={<EventsPage />} />
-          <Route path="events/new" element={<PublishPage />} />
-          <Route path="events/:id" element={<EventDetailPage />} />
-          <Route path="deliveries" element={<DeliveriesPage />} />
-          <Route path="*" element={<NotFound />} />
+    // Navigating away from a crashed page recovers (without remounting the app on every route).
+    <ErrorBoundary resetKey={pathname}>
+      <Routes>
+        <Route path="/connect" element={<ConnectPage />} />
+        <Route element={<RequireSession />}>
+          <Route element={<AppShell />}>
+            <Route index element={<OverviewPage />} />
+            <Route path="endpoints" element={<EndpointsPage />} />
+            <Route path="events" element={<EventsPage />} />
+            <Route path="events/new" element={<PublishPage />} />
+            <Route path="events/:id" element={<EventDetailPage />} />
+            <Route path="deliveries" element={<DeliveriesPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </ErrorBoundary>
   );
 }
 

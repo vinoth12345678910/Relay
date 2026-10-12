@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/lib/usePageTitle';
 import { Link } from 'react-router';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/ui/Feedback';
 import { PausedEndpointsCard } from './PausedEndpointsCard';
@@ -11,6 +12,7 @@ import { useAutoRefresh } from './useAutoRefresh';
 export const OVERVIEW_REFRESH_MS = 10_000;
 
 export function OverviewPage() {
+  usePageTitle('Overview');
   const refresh = useAutoRefresh(OVERVIEW_REFRESH_MS);
   const o = useOverviewData(refresh.refetchInterval);
   const { PENDING, IN_FLIGHT, DEAD } = o.byStatus;

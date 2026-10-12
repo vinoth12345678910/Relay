@@ -1,6 +1,7 @@
 import * as RD from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useReturnFocus } from './useReturnFocus';
 
 /** Side sheet on Radix Dialog (focus trap, Escape, focus return). Full-width on phones. */
 export function Drawer({
@@ -14,11 +15,14 @@ export function Drawer({
   title: ReactNode;
   children: ReactNode;
 }) {
+  const focus = useReturnFocus();
   return (
     <RD.Root open={open} onOpenChange={onOpenChange}>
       <RD.Portal>
         <RD.Overlay className="fixed inset-0 z-40 bg-black/40" />
         <RD.Content
+          onOpenAutoFocus={focus.onOpenAutoFocus}
+          onCloseAutoFocus={focus.onCloseAutoFocus}
           aria-describedby={undefined}
           className="fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-border bg-surface shadow-2xl"
         >

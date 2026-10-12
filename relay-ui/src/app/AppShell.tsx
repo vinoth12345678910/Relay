@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router';
+import { useEffect, useRef } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router';
 import {
   Inbox,
   LayoutDashboard,
@@ -11,7 +12,6 @@ import {
   Waypoints,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/lib/theme';
 import { maskKey, session, useSession } from '@/session/store';
@@ -60,8 +60,24 @@ export function Logo() {
   );
 }
 
+/** After client-side navigation, move focus to the new page so keyboard/SR users start there. */
+function useFocusMainOnNavigate() {
+  const { pathname } = useLocation();
+  const main = useRef<HTMLElement>(null);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    main.current?.focus({ preventScroll: false });
+  }, [pathname]);
+  return main;
+}
+
 export function AppShell() {
   const s = useSession();
+  const mainRef = useFocusMainOnNavigate();
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[220px_1fr]">
       <a
@@ -119,10 +135,13 @@ export function AppShell() {
             </Button>
           </div>
         </header>
-        <main id="main" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-6">
-          <ErrorBoundary>
-            <Outlet />
-          </ErrorBoundary>
+        <main
+          ref={mainRef}
+          id="main"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-6"
+        >
+          <Outlet />
         </main>
       </div>
     </div>

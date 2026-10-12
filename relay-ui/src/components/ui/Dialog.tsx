@@ -1,6 +1,7 @@
 import * as RD from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useReturnFocus } from './useReturnFocus';
 import { cn } from '@/lib/cn';
 
 /**
@@ -26,11 +27,14 @@ export function Dialog({
   dismissible?: boolean;
   className?: string;
 }) {
+  const focus = useReturnFocus();
   return (
     <RD.Root open={open} onOpenChange={onOpenChange}>
       <RD.Portal>
         <RD.Overlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[1px]" />
         <RD.Content
+          onOpenAutoFocus={focus.onOpenAutoFocus}
+          onCloseAutoFocus={focus.onCloseAutoFocus}
           onEscapeKeyDown={(e) => !dismissible && e.preventDefault()}
           onPointerDownOutside={(e) => !dismissible && e.preventDefault()}
           onInteractOutside={(e) => !dismissible && e.preventDefault()}

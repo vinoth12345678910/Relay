@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-mock
+playwright-report
+test-results
+coverage
+*.local
+.env
+.env.*
+!.env.mock
+!.env.example

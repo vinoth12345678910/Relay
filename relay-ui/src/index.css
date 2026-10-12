@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+/* Dark mode is class-based so the toggle can override prefers-color-scheme (see lib/theme.ts). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Semantic tokens. Both themes are first-class; every fg/bg pair below meets WCAG AA. */
+:root {
+  --bg: #f7f7f8;
+  --surface: #ffffff;
+  --surface-2: #f1f1f3;
+  --border: #e3e3e8;
+  --border-strong: #c9c9d1;
+  --fg: #17171c;
+  --muted: #555561;
+  --accent: #0b7a55;
+  --accent-hover: #09684a;
+  --accent-fg: #ffffff;
+  --ring: #2563eb;
+  --success: #08704d;
+  --success-bg: #e8f7f0;
+  --danger: #b42318;
+  --danger-bg: #fdeeec;
+  --warning: #8a4b06;
+  --warning-bg: #fdf4e3;
+  --info: #1e4fd8;
+  --info-bg: #ebf1fe;
+  --code-bg: #f4f4f6;
+}
+
+.dark {
+  --bg: #0b0b0e;
+  --surface: #131317;
+  --surface-2: #1b1b21;
+  --border: #29292f;
+  --border-strong: #3a3a43;
+  --fg: #ededf0;
+  --muted: #a3a3ae;
+  --accent: #3ddc97;
+  --accent-hover: #5fe6ad;
+  --accent-fg: #04291b;
+  --ring: #7aa5ff;
+  --success: #5fe0a8;
+  --success-bg: #0d2a1f;
+  --danger: #ff9a8f;
+  --danger-bg: #331412;
+  --warning: #f6c76a;
+  --warning-bg: #2e2208;
+  --info: #94b6ff;
+  --info-bg: #13213f;
+  --code-bg: #0f0f13;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-code-bg: var(--code-bg);
+  --font-sans: 'Inter var', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg text-fg font-sans text-sm antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

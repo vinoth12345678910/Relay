@@ -1,0 +1,7 @@
+dist
+dist-mock
+node_modules
+public/mockServiceWorker.js
+playwright-report
+test-results
+package-lock.json

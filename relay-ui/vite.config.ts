@@ -1,8 +1,22 @@
 import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig, loadEnv } from 'vite';
+import { rmSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { CSP } from './csp';
 import { configDefaults } from 'vitest/config';
+
+/** public/mockServiceWorker.js is only for `--mode mock`; keep it out of real builds. */
+function dropMockWorker(mode: string, outDir: string): Plugin {
+  return {
+    name: 'relay-drop-mock-worker',
+    apply: 'build',
+    closeBundle() {
+      if (mode !== 'mock') rmSync(resolve(outDir, 'mockServiceWorker.js'), { force: true });
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   // Only RELAY_API_TARGET is read here; it never reaches the browser bundle (no VITE_ prefix).
@@ -10,7 +24,7 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.RELAY_API_TARGET ?? 'http://localhost:8080';
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), dropMockWorker(mode, 'dist')],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
       port: 5173,
@@ -19,7 +33,7 @@ export default defineConfig(({ mode }) => {
       // Idempotent-Replayed survive (the dev CORS config does not allow or expose them).
       proxy: { '/api': { target: apiTarget, changeOrigin: true } },
     },
-    preview: { port: 4173, strictPort: true },
+    preview: { port: 4173, strictPort: true, headers: { 'Content-Security-Policy': CSP } },
     build: {
       sourcemap: true,
       rollupOptions: {

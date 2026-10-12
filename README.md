@@ -428,6 +428,16 @@ let a slow send be delivered twice).
 
 ---
 
+## Frontend
+
+`relay-ui/` is a browser console for Relay: connect with an API key, manage endpoints (the signing secret
+is shown once), publish events with or without an `Idempotency-Key`, browse and filter deliveries, inspect
+every attempt, and replay dead ones. `npm run dev` proxies `/api` to `localhost:8080`; `npm run dev:mock`
+runs it with no backend. Setup, scripts and the (deliberate) security trade-off of holding an API key in a
+browser: **[relay-ui/README.md](relay-ui/README.md)**.
+
+---
+
 ## Build and test
 
 ```bash

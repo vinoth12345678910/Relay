@@ -75,9 +75,12 @@ export function seedDb(): Db {
           durationMs: 40 + i * 13,
           statusCode: ok ? 200 : (code ?? null),
           error: ok ? null : code === null ? 'connect timed out' : `HTTP ${code}`,
+          // A timeout has no body; an error page is receiver-controlled HTML (exercises escaping).
           responseSnippet: ok
             ? '{"ok":true}'
-            : '<html><body><h1>502 Bad Gateway</h1><script>alert(1)</script></body></html>',
+            : code === null
+              ? null
+              : `<html><body><h1>${code} Bad Gateway</h1><script>alert(1)</script></body></html>`,
         };
       }),
     );
@@ -88,7 +91,7 @@ export function seedDb(): Db {
   delivery(e1.id, orders.id, 'SUCCEEDED', 1, 200);
   delivery(e1.id, billing.id, 'DEAD', 9, 502);
   const e2 = event('order.refunded', { orderId: 41, amount: 500 });
-  delivery(e2.id, orders.id, 'DEAD', 9, null);
+  delivery(e2.id, orders.id, 'DEAD', 9, 502);
   delivery(e2.id, billing.id, 'PENDING', 3, 503);
   const e3 = event('order.created', { orderId: 43 });
   delivery(e3.id, orders.id, 'IN_FLIGHT', 1, null);

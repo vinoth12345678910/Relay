@@ -22,13 +22,14 @@ export const test = base.extend<{ leakGuard: void }>({
       });
       page.on('console', (m) => {
         if (m.text().includes(E2E_KEY)) leaks.push(`console: ${m.text()}`);
+        if (/Content Security Policy|Refused to/i.test(m.text())) leaks.push(`CSP: ${m.text()}`);
       });
       await use();
       const local = await page
         .evaluate(() => JSON.stringify({ ...window.localStorage }))
         .catch(() => '{}');
       if (local.includes(E2E_KEY)) leaks.push('localStorage');
-      expect(leaks, 'API key leaked').toEqual([]);
+      expect(leaks, 'API key leak or CSP violation').toEqual([]);
     },
     { auto: true },
   ],

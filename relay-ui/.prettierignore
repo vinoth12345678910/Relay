@@ -5,3 +5,7 @@ public/mockServiceWorker.js
 playwright-report
 test-results
 package-lock.json
+security-headers.inc
+nginx.conf
+Dockerfile
+.dockerignore
